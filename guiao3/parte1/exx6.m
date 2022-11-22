@@ -56,3 +56,35 @@ plot(fc15)
 
 
 
+
+
+% d) Matriz Q (feito em cima)
+fprintf("d)\n");
+display(Q);
+
+
+% e) Matriz Fundamental
+fprintf("e)\n")
+I = eye(3,3);
+F = I -Q;
+F = F^(-1); % = inv(F)
+display(F);
+
+% f)
+t = F';
+tmp = [1
+       1
+       1];
+t = F * tmp;
+fprintf("f)\n")
+fprintf("Número de passos antes da absorção:\n");
+fprintf("Começando no estado 1: %.4f\n", t(1));
+fprintf("Começando no estado 2: %.4f\n", t(2));
+fprintf("Começando no estado 4: %.4f\n", t(3));
+
+
+% g) Matriz B das probabilidades de absorção
+ B = R * F;
+fprintf("g)\n")
+fprintf("Começando no estado 1, probabilidade  de estar no estado 3: %.4f\n",B(1,1));
+fprintf("Começando no estado 1, probabilidade de estar no estado 5: %.4f\n", B(2,1));
