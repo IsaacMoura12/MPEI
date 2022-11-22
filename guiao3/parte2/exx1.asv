@@ -48,9 +48,9 @@ for i = 1:100
 end
 
 %plot(fb)
-plot(fc15)
+%plot(fc15)
 
-% O prob do estado 3 é maior porque existem 2 estados
+% O prob do estado 3 é maior porque exSistem 2 estados
 %absorventes e o estado absorevnete que tende mais para 1 
 %é o que tem o caminho de transição mais prob
 
@@ -89,10 +89,49 @@ fprintf("g)\n")
 fprintf("Começando no estado 1, probabilidade  de estar no estado 3: %.4f\n",B(1,1));
 fprintf("Começando no estado 1, probabilidade de estar no estado 5: %.4f\n", B(2,1));
 
+%começando no 1
+media1 = zeros(1,1e5);
+for i = 1:1e5
+
+    % how to use crawl()
+    state = crawl(T, 1, [4,5]);
+    media1(i) = length(state);
+
+end 
+
+media1 = sum(media1)/1e5
+
+%começando no 2
+media2 = zeros(1,1e5);
+for i = 1:1e5
+
+    % how to use crawl()
+    state = crawl(T, 2, [4,5]);
+    media2(i) = length(state);
+
+end 
+
+media2 = sum(media2)/1e5
 
 
-% how to use crawl()
-state = crawl(T, 1, [4,5]);
+%começando no 4
+media4 = zeros(1,1e5);
+for i = 1:1e5
+
+    % how to use crawl()
+    state = crawl(T, 4, [4,5]);
+    media4(i) = length(state);
+
+end 
+
+media4 = sum(media4)/1e5
+
+
+%1a) para o g
+
+
+
+
 % Note:
 % if the Markov chain has more than 1 absorbing state the third argument
 % must be a vector with the absorbing states
@@ -105,15 +144,39 @@ state = crawl(T, 1, [4,5]);
 % H - state transition matrix
 % first - initial state
 % last - terminal or absorving state
-function [state] = crawl(T, 1, 5)
+function [state] = crawl(H, first, last)
     % the sequence of states will be saved in the vector "state"
     % initially, the vector contains only the initial state:
-    state = [1];
+    state = first;
     % keep moving from state to state until state "last" is reached:
     while (1)
-        state(5+1) = nextState(T, state(5));
-        if ismember(state(end), 5) % verifies if state(end) is absorbing
+        state(end+1) = nextState(H, state(end));
+        if ismember(state(end), last) % verifies if state(end) is absorbing
             break;
         end
     end
 end
+
+% Returning the next state
+% Inputs:
+% H - state transition matrix
+% currentState - current state
+function state = nextState(H, currentState)
+    % find the probabilities of reaching all states starting at the current one:
+    probVector = H(:,currentState)'; % probVector is a row vector
+    n = length(probVector); %n is the number of states
+    % generate the next state randomly according to probabilities probVector:
+    state = discrete_rnd(1:n, probVector);
+end
+% Generate randomly the next state.
+% Inputs:
+% states = vector with state values
+% probVector = probability vector
+function state = discrete_rnd(states, probVector)
+    U=rand();
+    i = 1 + sum(U > cumsum(probVector));
+    state= states(i);
+end
+
+%b
+
