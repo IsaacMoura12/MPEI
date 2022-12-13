@@ -90,44 +90,93 @@ fprintf("Começando no estado 1, probabilidade  de estar no estado 3: %.4f\n",B(
 fprintf("Começando no estado 1, probabilidade de estar no estado 5: %.4f\n", B(2,1));
 
 %começando no 1
+n11 = zeros(1,1e5); %n de vezes que começando no estado 1 passa pelo estado 1 antes de cair no absorvente
+n12 = zeros(1,1e5);
+n13 = zeros(1,1e5);
 media1 = zeros(1,1e5);
+
+%1b)
+b
 for i = 1:1e5
 
     % how to use crawl()
     state = crawl(T, 1, [4,5]);
     media1(i) = length(state);
-
+    x = state == 1;
+    n11(i) = sum(x);
+    x = state == 2;
+    n12(i) = sum(x);
+    x = state == 3;
+    n13(i) = sum(x);
 end 
 
+n11 = sum(n11)/1e5;
+n12 = sum(n12)/1e5;
+n13 = sum(n13)/1e5;
 media1 = sum(media1)/1e5
 
 %começando no 2
+
+n21 = zeros(1,1e5); %n de vezes que começando no estado 2 passa pelo estado 1 antes de cair no absorvente
+n22 = zeros(1,1e5);
+n23 = zeros(1,1e5);
 media2 = zeros(1,1e5);
 for i = 1:1e5
 
     % how to use crawl()
     state = crawl(T, 2, [4,5]);
     media2(i) = length(state);
+    x = state == 1;
+    n21(i) = sum(x);
+    x = state == 2;
+    n22(i) = sum(x);
+    x = state ==3;
+    n23(i) = sum(x);
 
 end 
+n21 = sum(n21)/1e5;
+n22 = sum(n22)/1e5;
+n23 = sum(n23)/1e5;
 
 media2 = sum(media2)/1e5
 
 
 %começando no 4
+n41 = zeros(1,1e5); %n de vezes que começando no estado 2 passa pelo estado 1 antes de cair no absorvente
+n42 = zeros(1,1e5);
+n43 = zeros(1,1e5);
+
 media4 = zeros(1,1e5);
 for i = 1:1e5
 
     % how to use crawl()
-    state = crawl(T, 4, [4,5]);
+    state = crawl(T, 3, [4,5]);
     media4(i) = length(state);
+    x = state == 1;
+    n41(i) = sum(x);
+    x = state == 2;
+    n42(i) = sum(x);
+    x = state ==3;
+    n43(i) = sum(x);
 
 end 
+
+n41 = sum(n41)/1e5;
+n42 = sum(n42)/1e5;
+n43 = sum(n43)/1e5;
 
 media4 = sum(media4)/1e5
 
 
 %1a) para o g
+ Fiig = [n11 n21 n41
+        n12 n22 n42
+        n13 n23 n43];
+
+ Z = R*Fiig;
+
+ fprintf("Começando no estado 1, probabilidade  de estar no estado 3: %.4f\n",Z(1,1));
+fprintf("Começando no estado 1, probabilidade de estar no estado 5: %.4f\n", Z(2,1));
 
 
 
@@ -178,5 +227,4 @@ function state = discrete_rnd(states, probVector)
     state= states(i);
 end
 
-%b
 

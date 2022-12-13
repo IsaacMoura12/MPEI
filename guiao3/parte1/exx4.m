@@ -60,9 +60,10 @@ fprintf(" 4(b) 200 transições - p(A) = %.8f, p(B) = %.8f, p(C) = %.8f, p(D) =%
 %sum(v) = 1
 
 n = length(T);
-M = [T - eye(n); ones(1,n)]; % (T -I)
+M = [T - eye(n); 
+    ones(1,n)]; % (T -I)
 x = [zeros(n,1);1];
-v = M\x;
+v = M\x
 
 %Adiciona-se uns na ultima linha para a soma das
 % colunas dar 1 ou seja que a soma de todas equaçoes
