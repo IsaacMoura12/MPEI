@@ -1,6 +1,5 @@
 load script1;
 
-
 user = 0;
 option = 0;
 
@@ -12,7 +11,7 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
         if(user == 0)
             user = str2num(input(['Insert User ID (1 to ' num2str(Nu) '): '], 's'));
         elseif (user < 1 || user > Nu)
-            fprintf('User Id not valid. ');
+            fprintf('User Id not valid. ')
             clc;
             user = 0;
         else
@@ -34,8 +33,6 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
                         SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
                     case 3
                         SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
-                    otherwise
-                        break;
                 end
             end
         end
@@ -85,10 +82,7 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
 end
 
 function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
-    cattegories
-    for i = 1:length(YourMoviesTable(user))
-        
-    end
+    
 
 
     clc;

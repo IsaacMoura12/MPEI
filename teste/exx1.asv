@@ -32,16 +32,9 @@ end
 k= 100
 MinHashCat = inf(length(dicFilms),k)
 for i = 1:length(dicFilms)
-    conjunto = dicFilms(i,2:end);
+    conjunto = dicFilms(i,2:length(dicFilms(i,:)));
     for j = 1:length(conjunto)
-        chave = char(conjunto(j));
-        hash = zeros(1,k);
-        for kk = 1:k
-            chave = [chave num2str(kk)];
-            hash(kk) = DJB31MA(chave,127);
-        end
-        MinHashCat(i,:) = min([MinHashCat(i,:); hash]); 
-    end
+        chave = char
 
 end
 
