@@ -12,9 +12,9 @@ for i = 1:Nu
 end
 
 
+
 K = 100; 
 MinHashValue = inf(Nu,K);
-
 
 for i = 1:Nu
     conjunto = YourMoviesTable{i}; 
@@ -29,10 +29,19 @@ for i = 1:Nu
     end
 end
 
-
+shingle_size=3;
+K = 150;  % Número de funções de dispersão
+MinHashSig = inf(length(dicFilms),K);
+for i = 1:length(dicFilms)
+    conjunto = lower(dicFilms{i,1});
+    shingles = {};
+    for j= 1 : length(conjunto) - shingle_size+1  % Criacao dos shingles para cada filme
+        shingle = conjunto(j:j+shingle_size-1);
+        shingles{j} = shingle;
+    end
+end
 
 
 %save Usermovies YourMoviesTable
-
 
 
