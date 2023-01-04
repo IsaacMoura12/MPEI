@@ -2,11 +2,11 @@ N = 1e5;
 imin = 6;
 imax = 20;
 alfabeto = ['a':'z' 'A':'Z'];
-for i= 1:1e3
-    keys = generate_keys_unif(N,imin,imax,alfabeto);
-    equal = length(unique(keys))
 
-end
+keys = generate_keys_unif(N,imin,imax,alfabeto);
+equal = length(unique(keys))
+
+save 'keys' 'keys'
 
 function [keys] = generate_keys_unif(N,imin,imax,alfabeto)
 %generate N words with lenth between imin and imax...
