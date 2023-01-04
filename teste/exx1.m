@@ -39,9 +39,20 @@ for i = 1:length(dicFilms)
         shingle = conjunto(j:j+shingle_size-1);
         shingles{j} = shingle;
     end
+
+    for j = 1:length(shingles)
+        chave = char(shingles(j));
+        hash = zeros(1,K);
+        for kk = 1:K
+            chave = [chave num2str(kk)];
+            hash(kk) = DJB31MA(chave,127);
+        end
+        MinHashSig(i,:) = min([MinHashSig(i,:);hash]);  % Valor minimo da hash para este shingle
+    end
 end
 
 
-%save Usermovies YourMoviesTable
+save script1 MinHashSig MinHashValue Nu dicFilms users YourMoviesTable
+
 
 
