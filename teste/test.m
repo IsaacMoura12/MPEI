@@ -1,33 +1,11 @@
 ufile = load('u.data');
 ufilms = ufile(1:end,1:3);
 users = unique(ufile(:,1));
-dicFilms = readcell('films.txt', 'Delimiter', '\t');
+dicFilms = readcell('films.txt','Delimiter', '\t');
+films = dicFilms(:,1);
 
 Nu = length(users);
 YourMoviesTable = cell(Nu, 1);
-
-for i = 1:Nu
-    x = find(ufilms(:,1) == users(i));
-    YourMoviesTable{i} = [YourMoviesTable{i} ufilms(x,2)];
-end
-
-
-
-K = 100; 
-MinHashValue = inf(Nu,K);
-
-for i = 1:Nu
-    conjunto = YourMoviesTable{i}; 
-    for j = 1:length(conjunto)
-        chave = char(conjunto(j));
-        hash = zeros(1,K);
-        for kk = 1:K
-            chave = [chave num2str(kk)];
-            hash(kk) = DJB31MA(chave,127);
-        end
-        MinHashValue(i,:) = min([MinHashValue(i,:); hash]);  % Valor minimo da hash para este título
-    end
-end
 
 k= 100;
 MinHashCat = inf(length(dicFilms),k);
@@ -79,30 +57,38 @@ for i = 1:Nc
     end  
 end
 
-shingle_size=3;
-K = 150;  % Número de funções de dispersão
-MinHashSig = inf(length(dicFilms),K);
-for i = 1:length(dicFilms)
-    conjunto = lower(dicFilms{i,1});
-    shingles = {};
-    for j= 1 : length(conjunto) - shingle_size+1  % Criacao dos shingles para cada filme
-        shingle = conjunto(j:j+shingle_size-1);
-        shingles{j} = shingle;
-    end
 
-    for j = 1:length(shingles)
-        chave = char(shingles(j));
-        hash = zeros(1,K);
-        for kk = 1:K
-            chave = [chave num2str(kk)];
-            hash(kk) = DJB31MA(chave,127);
-        end
-        MinHashSig(i,:) = min([MinHashSig(i,:);hash]);  % Valor minimo da hash para este shingle
+
+
+tic
+J=zeros(Nc);
+h=waitbar(0, 'Calculating');
+n2 =2;
+for n1 = 1:Nc
+    waitbar(n1/Nc, h);
+    if n2 ~= n1
+        J(n1,n2) = sum(MinHashCat(n1,:) ~= MinHashCat(n2,:))/k;
     end
 end
+fprintf('Tempo de calculo das distancias dadas por MinHash= %f\n',toc);
+delete (h)
 
 
-save script1 MinHashSig MinHashValue Nu dicFilms users YourMoviesTable MinHashCat MinHashallCat
+tic
+threshold = 0.8;
+SimilarMovies = cell(1,3);
+k = 1;
+for n1 = 1:Nc
+    if J(n1,n2) < threshold
+        SimilarMovies(k,:) = {char(films(n1)) char(films(n2)) J(n1,n2)};
+        k = k+1;
+    end
+end
+fprintf('Tempo de caluclo dos filmes mais similares= %f\n', toc);
+fprintf('No de pares mais similares= %d\n', size(SimilarMovies, 1));
+
+
+
 
 
 

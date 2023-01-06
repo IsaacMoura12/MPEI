@@ -29,13 +29,54 @@ for i = 1:Nu
     end
 end
 
-k= 100
-MinHashCat = inf(length(dicFilms),k)
-for i = 1:length(dicFilms)
-    conjunto = dicFilms(i,2:length(dicFilms(i,:)));
-    for j = 1:length(conjunto)
-        chave = char
+k= 100;
+MinHashCat = inf(length(dicFilms),k);
 
+Nc = length(dicFilms);
+
+allcategories = strings(1,19);
+Nallc = 19;
+it = 1;
+for i = 1:length(dicFilms)
+    categorias = rmmissing(string(dicFilms(i,2:end)));
+    for x = 1: length(categorias)
+        categoria = categorias(x);
+        if ~ismember(categoria,allcategories)
+            allcategories(it) = categoria;
+            it = it +1;
+        end
+    end
+end
+
+MinHashallCat = inf(length(allcategories),k);
+
+for i = 1:Nallc
+    conjunto = allcategories(i); 
+    for j = 1:length(conjunto)
+        chave = char(conjunto(j));
+        hash = zeros(1,k);
+        for kk = 1:k
+            chave = [chave num2str(kk)];
+            hash(kk) = DJB31MA(chave,127);
+        end
+        MinHashallCat(i,:) = min([MinHashallCat(i,:); hash]);  % Valor minimo da hash para este título
+    end
+end
+
+MinHashCat = inf(Nc,k);
+
+for i = 1:Nc
+    conjunto = rmmissing(string(dicFilms(i,2:end)));
+    pos = [];
+    for j = 1:length(conjunto)
+        categoria = char(conjunto(j));
+        pos = [pos find(allcategories == categoria)]; %pos das categorias
+    end 
+    allkeys = [];
+    for kk = 1:length(pos)
+        hash = MinHashallCat(pos(kk),:);
+        MinHashCat(i,:) = min([MinHashCat(i,:); hash]);  % Valor minimo da hash para este título
+    end  
 end
 
 shingle_size=3;

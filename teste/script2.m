@@ -4,10 +4,10 @@ load script1;
 user = 0;
 option = 0;
 
-menu(user, option,MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable);
+menu(user, option,MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable,MinHashallCat,MinHashCat);
 
-function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable)
-    while(user == 0 ||  user < 1 || user > Nu)
+function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable,MinHashallCat,MinHashCat)
+    while(option ~=5)
         clc
         if(user == 0)
             user = str2num(input(['Insert User ID (1 to ' num2str(Nu) '): '], 's'));
@@ -18,8 +18,8 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
         else
 
             while(option <5)
-                fpritnf('\nUser ID: %d Menu:', user)
-                fprintf('\n1 - Your movies\n2 - Suggestion of movies based on other users\n3 - Suggestion of movies based on already evaluated movies\n4 - Movies feedback based on popularity\n5 - Exit')
+                fprintf('\nUser ID: %d Menu:', user)
+                fprintf('\n1 - Your movies\n2 - Suggestion of movies based on other users\n3 - Suggestion of movies based on already evaluated movies\n4 - Movies feedback based on popularity\n5 - Exit\n')
     
                 option = str2num(input('','s'));
 
@@ -33,9 +33,11 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
                     case 2
                         SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
                     case 3
-                        SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
-                    otherwise
+                        SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
+                    case 5
                         break;
+                    otherwise
+                        fprintf('Choose a number more than 1 and less than 5');
                 end
             end
         end
@@ -48,9 +50,10 @@ function yourMovies(user,YourMoviesTable, dicFilms)
     keyMovie = YourMoviesTable{user};
     for i = 1:length(keyMovie)
         linha = keyMovie(i);
-        fprintf(dicFilms(linha,1))
+        fprintf(char(dicFilms(linha,1)))
+        fprintf('\n')
     end
-    clc;
+    pause; clc;
 end
 
 function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
@@ -81,13 +84,37 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
             fprintf(suggestions(i) + '\n');
         end
     end
-    clc;
+    pause; clc;
 end
 
-function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
-    cattegories
-    for i = 1:length(YourMoviesTable(user))
-        
+function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
+   
+    allmovies = YourMoviesTable{user};
+    
+    Nc = length(dicFilms);
+    J=zeros(Nc);
+    k=100;
+
+    h=waitbar(0, 'Calculating');
+    for i = 1:length(allmovies)
+        waitbar(i/length(allmovies), h);
+        n2 = allmovies(i);
+        for n1 = 1:Nc
+            if n2 ~= n1
+                J(n1,n2) = sum(MinHashCat(n1,:) ~= MinHashCat(n2,:))/k;
+            end
+        end
+    end
+    
+    films = dicFilms(:,1);
+    threshold = 0.8;
+    SimilarMovies = cell(1,3);
+    k = 1;
+    for n1 = 1:Nc
+        if J(n1,n2) < threshold
+            SimilarMovies(k,:) = {char(films(n1)) char(films(n2)) J(n1,n2)};
+            k = k+1;
+        end
     end
 
 

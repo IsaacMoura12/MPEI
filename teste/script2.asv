@@ -1,17 +1,18 @@
 load script1;
 
+
 user = 0;
 option = 0;
 
 menu(user, option,MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable);
 
 function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTable)
-    while(user == 0 ||  user < 1 || user > Nu)
+    while(true)
         clc
         if(user == 0)
             user = str2num(input(['Insert User ID (1 to ' num2str(Nu) '): '], 's'));
         elseif (user < 1 || user > Nu)
-            fprintf('User Id not valid. ')
+            fprintf('User Id not valid. ');
             clc;
             user = 0;
         else
@@ -32,7 +33,10 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
                     case 2
                         SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
                     case 3
-                        SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
+                        SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
+                        
+                    otherwise
+                        break;
                 end
             end
         end
@@ -81,8 +85,33 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
     clc;
 end
 
-function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
+function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
+   
+    allmovies = YourMoviesTable{user};
     
+    Nc = length(dicFilms);
+    J=zeros(allmovies*Nc);
+    k=100;
+
+    for i = 1:length(allmovies)
+        n2 = allmovies(i);
+        for n1 = 1:Nc
+            waitbar(n1/Nc, h);
+            if n2 ~= n1
+                J(n1,n2) = sum(MinHashCat(n1,:) ~= MinHashCat(n2,:))/k;
+            end
+        end
+    end
+
+    threshold = 0.8;
+    SimilarMovies = cell(1,3);
+    k = 1;
+    for n1 = 1:Nc
+        if J(n1,n2) < threshold
+            SimilarMovies(k,:) = {char(films(n1)) char(films(n2)) J(n1,n2)};
+            k = k+1;
+        end
+    end
 
 
     clc;
