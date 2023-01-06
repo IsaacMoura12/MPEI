@@ -34,6 +34,8 @@ function menu(user,option, MinHashSig, MinHashValue, Nu, dicFilms, YourMoviesTab
                         SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
                     case 3
                         SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
+                    case 4
+                        searchTitle(dicFilms, MinHashSig)
                     case 5
                         break;
                     otherwise
@@ -166,5 +168,56 @@ function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,Min
 
     fprintf('\nPress enter to continue');
     pause; clc;
+end
+
+function searchTitle(dicFilms, MinHashSig)
+    str = lower(input('\nWrite a String: ', 's'));
+    shingle_size = 3;  % igual numero de shingles
+    K = size(MinHashSig, 2);  % manter K
+    threshold = 0.99;  % Definir um threshold que nos é dado
+
+    % Estrutura de cell array para os shingles
+    shinglesAns = {};
+    for i = 1:length(str) - shingle_size+1
+        shingle = str(i:i+shingle_size-1);
+        shinglesAns{i} = shingle;
+    end
+
+    % MinHash para os shingles
+    MinHashString = inf(1,K);
+    for j = 1:length(shinglesAns)
+        chave = char(shinglesAns{j});
+        hash = zeros(1,K);
+        for kk = 1:K
+            chave = [chave num2str(kk)];
+            hash(kk) = DJB31MA(chave, 127);
+        end
+        MinHashString(1,:) = min([MinHashString(1,:); hash]);
+    end
+
+    % Distância de Jaccard
+    distJ = ones(1, size(dicFilms,1));  % guarda distâncias
+    h = waitbar(0,'Calculating');
+    for i=1:size(dicFilms, 1)  % cada hashcode da string
+        waitbar(i/K, h);
+        distJ(i) = sum(MinHashSig(i,:) ~= MinHashString)/K;
+    end
+    delete(h);
+    
+    flag = false;  % flag para ver se foi encontrado filme
+    for i = 1:5
+        [val, pos] = min(distJ);  % Calcular o valor mais proximo(minimo)
+        if (val <= threshold)  % Se o valor nao pertence, exclui
+            flag = true;
+            fprintf('%s\n', dicFilms{pos, 1});
+        end
+        distJ(pos) = 1;  % Retirar esse filme dando uma distancia igual a 1
+    end
+    
+    if (~flag)
+        fprintf('No movies found.\n');
+    end
+    fprintf(2, 'Press any key to continue. ');
+    pause;clc;  % Manter info
 end
 
