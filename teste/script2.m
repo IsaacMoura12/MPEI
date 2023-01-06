@@ -60,6 +60,7 @@ end
 function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
     k = 100;
     Jdistances = ones(1,Nu);
+    myMovies = YourMoviesTable{user};
 
     for n = 1:Nu
         if n~= user
@@ -69,13 +70,13 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
     end
     
     [val,SimilarId] = min(Jdistances);
-    Jdistances(:,SimilarId) = [];
-    [val,SimilarId2] = min(Jdistances);
+   
     
     suggestions = [];
-    for n = 1: length(YourMoviesTable{SimilarId})
-        if(~ismember(YourMoviesTable{SimilarId}(n), YourMoviesTable{user}))
-            suggestions = [suggestions string(dicFilms(n,1))];
+    moviessmilarid = YourMoviesTable{SimilarId};
+    for n = 1: length(moviessmilarid)
+        if ~ismember(moviessmilarid(n), myMovies)
+            suggestions = [suggestions string(dicFilms(moviessmilarid(n),1))];
         end
     end
 
@@ -88,10 +89,13 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
         end
     end
     
+    Jdistances(:,SimilarId) = [];
+    [val,SimilarId2] = min(Jdistances);
     suggestions = [];
-    for n = 1: length(YourMoviesTable{SimilarId2})
-        if(~ismember(YourMoviesTable{SimilarId2}(n), YourMoviesTable{user}))
-            suggestions = [suggestions string(dicFilms(n,1))];
+    moviessmilarid = YourMoviesTable{SimilarId2};
+    for n = 1: length(moviessmilarid)
+        if(~ismember(moviessmilarid(n), myMovies))
+            suggestions = [suggestions string(dicFilms(moviessmilarid(n),1))];
         end
     end
 

@@ -60,6 +60,7 @@ end
 function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
     k = 100;
     Jdistances = ones(1,Nu);
+    myMovies = YourMoviesTable{user};
 
     for n = 1:Nu
         if n~= user
@@ -69,12 +70,12 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
     end
     
     [val,SimilarId] = min(Jdistances);
-    Jdistances(:,SimilarId) = [];
-    [val,SimilarId2] = min(Jdistances);
+   
     
     suggestions = [];
-    for n = 1: length(YourMoviesTable{SimilarId})
-        if(~ismember(YourMoviesTable{SimilarId}(n), YourMoviesTable{user}))
+    moviessmilarid = YourMoviesTable{SimilarId};
+    for n = 1: length(moviessmilarid)
+        if(~ismember(moviessmilarid(n), myMovies))
             suggestions = [suggestions string(dicFilms(n,1))];
         end
     end
@@ -88,9 +89,12 @@ function SuggestionsOtherUsers(Nu,MinHashValue,user,YourMoviesTable,dicFilms)
         end
     end
     
+    Jdistances(:,SimilarId) = [];
+    [val,SimilarId2] = min(Jdistances);
     suggestions = [];
-    for n = 1: length(YourMoviesTable{SimilarId2})
-        if(~ismember(YourMoviesTable{SimilarId2}(n), YourMoviesTable{user}))
+    moviessmilarid = YourMoviesTable{SimilarId2};
+    for n = 1: length(moviessmilarid)
+        if(~ismember(moviessmilarid(n), myMovies))
             suggestions = [suggestions string(dicFilms(n,1))];
         end
     end
@@ -110,7 +114,6 @@ end
 function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
    
     allmovies = YourMoviesTable{user};
-    ismember()
     %usermov = cell2mat(allmovies);
     Nusermovies = length(allmovies);
     
@@ -120,7 +123,7 @@ function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,Min
 
     h=waitbar(0, 'Calculating');
     for i = 1:Nusermovies
-        waitbar(i/length(allmovies), h);
+        waitbar(i/Nusermovies, h);
         n1 = allmovies(i);
         for n2 = 1:Nc
             if n2 ~= n1 && ~ismember(n2,allmovies)
@@ -138,8 +141,8 @@ function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,Min
     for i = 1:Nusermovies
         waitbar(i/Nusermovies, h);
         n1 = allmovies(i);
-        for n2 = 1:length(J)
-            if J(n1,n2) < threshold
+        for n2 = 1:Nc
+            if J(n1,n2) < threshold && ~ismember(n2,allmovies)
                 SimilarMovies(k,:) = {n1 n2 J(n1,n2)};
                 k = k+1;
             end
@@ -149,6 +152,8 @@ function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,Min
     
     allsimilarMovies = cell2mat(SimilarMovies(:,2));
     similar2Movies = mode(allsimilarMovies,'all');
+
+    ismember(similar2Movies, allmovies)
     
     fprintf('\nTwo movies most common to you: ');
     fprintf('%s, ',char(films(similar2Movies)));
