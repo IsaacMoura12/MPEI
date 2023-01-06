@@ -116,7 +116,6 @@ end
 function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,MinHashallCat,MinHashCat)
    
     allmovies = YourMoviesTable{user};
-    %usermov = cell2mat(allmovies);
     Nusermovies = length(allmovies);
     
     Nc = length(dicFilms);
@@ -155,7 +154,6 @@ function SuggestionsCategories(Nu,MinHashValue,user,YourMoviesTable,dicFilms,Min
     allsimilarMovies = cell2mat(SimilarMovies(:,2));
     similar2Movies = mode(allsimilarMovies,'all');
 
-    ismember(similar2Movies, allmovies)
     
     fprintf('\nTwo movies most common to you: ');
     fprintf('%s, ',char(films(similar2Movies)));
