@@ -217,7 +217,7 @@ function searchTitle(dicFilms, MinHashSig)
     if (~flag)
         fprintf('No movies found.\n');
     end
-    fprintf(2, 'Press any key to continue. ');
+    fprintf('\nPress enter to continue');
     pause;clc;  % Manter info
 end
 
